@@ -1,0 +1,63 @@
+{
+  "name": "shelter",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/jest": "24.0.18",
+    "@types/node": "12.7.5",
+    "@types/react": "16.9.2",
+    "@types/react-dom": "16.9.0",
+    "axios": "latest",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "latest",
+    "react-router-dom": "latest",
+    "react-scripts": "3.1.2",
+    "reactstrap": "^8.2.0",
+    "redux": "latest",
+    "redux-logger": "latest",
+    "redux-thunk": "latest",
+    "reselect": "latest",
+    "typescript": "3.6.3"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --http --open --progress --config ./config/webpack.dev.js",
+    "build": "webpack --config ./config/webpack.prod.js",
+    "build-dev": "webpack --config ./config/webpack.dev.js",
+    "prod-local": "npm run build && static -p 3000 ./dist",
+    "dev-local": "npm run build-dev && static -a 0.0.0.0 -p 8080 ./dist",
+    "precommit": "lint-staged",
+    "test": "jest",
+    "tslint": "tslint ./*.tsx -t verbose",
+    "lint-fix": "tslint --fix ./*.tsx -t verbose"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^1.0.1",
+    "es6-promise": "^4.2.8",
+    "html-webpack-plugin": "latest",
+    "mini-css-extract-plugin": "latest",
+    "node-sass": "^4.12.0",
+    "redbox-react": "^1.6.0",
+    "ts-loader": "^6.1.0",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
+    "webpack": "^4.29.1",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1",
+    "webpack-merge": "^4.2.2"
+  }
+}
