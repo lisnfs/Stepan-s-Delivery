@@ -45,8 +45,8 @@ class HomePageComponent extends React.Component<Props, State> {
                 return (
                     <React.Fragment>
                         <Button color="link">
-                            <Link to="/couriers">
-                                Курьеры
+                            <Link to="/dishes">
+                                Блюда
                             </Link>
                         </Button>
                         <Button color="link">
@@ -55,8 +55,8 @@ class HomePageComponent extends React.Component<Props, State> {
                             </Link>
                         </Button>
                         <Button color="link">
-                            <Link to="/dishes">
-                                Блюда
+                            <Link to="/couriers">
+                                Пользователи
                             </Link>
                         </Button>
                     </React.Fragment>
@@ -65,12 +65,12 @@ class HomePageComponent extends React.Component<Props, State> {
                 return (
                     <React.Fragment>
                         <Button color="link">
-                            <Link to="/patients">
+                            <Link to="/dishes">
                                 Блюда
                             </Link>
                         </Button>
                         <Button color="link">
-                            <Link to="/patients">
+                            <Link to="/orders">
                                 Заказы
                             </Link>
                         </Button>
@@ -80,12 +80,12 @@ class HomePageComponent extends React.Component<Props, State> {
                 return (
                     <React.Fragment>
                         <Button color="link">
-                            <Link to="/patients">
+                            <Link to="/orders">
                                 Открытые заказы
                             </Link>
                         </Button>
                         <Button color="link">
-                            <Link to="/patients">
+                            <Link to="/orders">
                                 Выполненные заказы
                             </Link>
                         </Button>

@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import {DispatchThunk, RootState} from '@store';
 import {getDishes, isLoading, Thunks as dishesThunks} from '@store/dishes';
 import {connect} from 'react-redux';
+import {USER_ROLE, USER_ROLE_TYPE} from '../../constants';
 
 interface Props {
     getDishes: any;
@@ -23,6 +24,7 @@ class DishListComponent extends React.Component<Props, State> {
     }
 
     render() {
+        const isAdmin = localStorage.getItem(USER_ROLE) === USER_ROLE_TYPE.ROLE_ADMIN;
         const dishList = this.props.dishes.map(dish => {
             return (
                 <tr key={dish.id}>
@@ -30,20 +32,24 @@ class DishListComponent extends React.Component<Props, State> {
                     <td style={{whiteSpace: 'nowrap'}}>{dish.cost}</td>
                     <td>
                         <ButtonGroup>
-                            <Button
-                                size="sm"
-                                color="primary"
-                                tag={Link}
-                                to={'/dishes/' + dish.id}
-                            >
-                                Изменить
-                            </Button>
-                            <Button size="sm"
-                                    color="danger"
-                                    onClick={() => this.props.deleteOrder(dish.id)}
-                            >
-                                Удалить
-                            </Button>
+                            {isAdmin ? (
+                                <React.Fragment>
+                                    <Button
+                                        size="sm"
+                                        color="primary"
+                                        tag={Link}
+                                        to={'/dishes/' + dish.id}
+                                    >
+                                        Изменить
+                                    </Button>
+                                    <Button size="sm"
+                                            color="danger"
+                                            onClick={() => this.props.deleteOrder(dish.id)}
+                                    >
+                                        Удалить
+                                    </Button>
+                                </React.Fragment>
+                                ) : ''}
                         </ButtonGroup>
                     </td>
                 </tr>
@@ -54,7 +60,7 @@ class DishListComponent extends React.Component<Props, State> {
             <div>
                 <AppNavBar/>
                 <Container fluid>
-                    <div className="float-right">
+                    {  isAdmin ? (<div className="float-right">
                         <Button
                             color="success"
                             tag={Link}
@@ -62,7 +68,7 @@ class DishListComponent extends React.Component<Props, State> {
                         >
                             Добавить блюдо
                         </Button>
-                    </div>
+                    </div>) : '' }
                     <h3>Блюда</h3>
                     <Table className="mt-4">
                         <thead>

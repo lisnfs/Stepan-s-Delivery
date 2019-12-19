@@ -48,10 +48,8 @@ public class UsersController {
 
 
     @GetMapping("/")
-    public ResponseEntity<UserRole> getCouriers() {
-        return ResponseEntity.ok(roleRepository
-                .findByName(UserRoleType.ROLE_COURIER)
-                .orElseThrow(() -> new AppException("User Role not set.")));
+    public ResponseEntity<List<User>> getCouriers() {
+        return ResponseEntity.ok(userRepository.findAll());
     }
 
     @GetMapping("/{id}")
