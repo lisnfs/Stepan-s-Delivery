@@ -6,6 +6,7 @@ import {registrationReducer} from '@store/registration';
 import {ordersReducer} from '@store/orders';
 import {dishesReducer} from '@store/dishes';
 import {couriersReducer} from '@store/couriers';
+import {deliveryPointsReducer} from '@store/deliveryPoints';
 
 export const reducer: Reducer<RootState> = combineReducers<RootState>({
     alert: alertsReducer,
@@ -14,4 +15,6 @@ export const reducer: Reducer<RootState> = combineReducers<RootState>({
     orders: ordersReducer,
     dishes: dishesReducer,
     couriers: couriersReducer,
+    deliveryPoints: deliveryPointsReducer,
+
 });

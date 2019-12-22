@@ -14,6 +14,8 @@ import {DishesList} from '../dishes/DishList';
 import {DishEdit} from '../dishes/DishEdit';
 import {OrderEdit} from '../orders/OrderEdit';
 import {CouriersList} from '../couriers/CouriersList';
+import {DeliveryPointsList} from '../deliveryPoints/DeliveryPointList';
+import {DeliveryPointEdit} from '../deliveryPoints/DeliveryPointEdit';
 
 interface Props {
     alert?: AlertItem
@@ -51,7 +53,8 @@ class AppComponent extends Component<Props, State> {
                                 <PrivateRoute exact path="/orders" component={OrdersList}/>
                                 <PrivateRoute exact path="/orders/:id" component={OrderEdit}/>
                                 <PrivateRoute exact path="/dishes" component={DishesList}/>
-                                <PrivateRoute exact path="/dishes/new" component={DishEdit}/>
+                                <PrivateRoute exact path="/deliveryPoints/:id" component={DeliveryPointEdit}/>
+                                <PrivateRoute exact path="/deliveryPoints" component={DeliveryPointsList}/>
                                 <PrivateRoute exact path="/dishes/:id" component={DishEdit}/>
                                 <PrivateRoute exact path="/couriers" component={CouriersList}/>
                                 <Route path="/login" component={LoginPage}/>

@@ -23,24 +23,27 @@ class OrderListComponent extends React.Component<Props, State> {
     }
 
     render() {
+        const options = {
+            year: 'numeric', month: 'numeric', day: 'numeric',
+            hour: 'numeric', minute: 'numeric', second: 'numeric',
+            hour12: false
+        };
         const orderList = this.props.orders.map(order => {
             return (
                 <tr key={order.id}>
-                    {/*<td style={{whiteSpace: 'nowrap'}}>{order.fullName}</td>*/}
-                    {/*<td style={{whiteSpace: 'nowrap'}}>{order.career}</td>*/}
-                    {/*<td style={{whiteSpace: 'nowrap'}}>{order.experience}</td>*/}
-                    {/*<td style={{whiteSpace: 'nowrap'}}>{order.workingNumber}</td>*/}
-                    {/*<td style={{whiteSpace: 'nowrap'}}>{order.cellPhone}</td>*/}
+                    <td style={{whiteSpace: 'nowrap'}}>{new Intl.DateTimeFormat('en-GB', options).format(new Date(order.timeOrder))}</td>
+                    <td style={{whiteSpace: 'nowrap'}}>{order.payment}</td>
+                    <td style={{whiteSpace: 'nowrap'}}>{order.status === 0 ? 'Создан' : 'Выполнен'}</td>
                     <td>
                         <ButtonGroup>
-                            {/*<Button*/}
-                            {/*    size="sm"*/}
-                            {/*    color="primary"*/}
-                            {/*    tag={Link}*/}
-                            {/*    to={'/orders/' + order.id}*/}
-                            {/*>*/}
-                            {/*    Edit*/}
-                            {/*</Button>*/}
+                            <Button
+                                size="sm"
+                                color="primary"
+                                tag={Link}
+                                to={'/orders/' + order.id}
+                            >
+                                Изменить
+                            </Button>
                             {/*<Button size="sm"*/}
                             {/*        color="danger"*/}
                             {/*        onClick={() => this.props.deleteOrder(order.id)}*/}
@@ -57,22 +60,20 @@ class OrderListComponent extends React.Component<Props, State> {
             <div>
                 <AppNavBar/>
                 <Container fluid>
-                    {/*<div className="float-right">*/}
-                    {/*    <Button*/}
-                    {/*        color="success"*/}
-                    {/*        tag={Link}*/}
-                    {/*        to="/orders/new "*/}
-                    {/*    >*/}
-                    {/*        Add Doctor*/}
-                    {/*    </Button>*/}
-                    {/*</div>*/}
+                    <div className="float-right">
+                        <Button
+                            color="success"
+                            tag={Link}
+                            to="/orders/new "
+                        >
+                            Добавить заказ
+                        </Button>
+                    </div>
                     <h3>Заказы</h3>
                     <Table className="mt-4">
                         <thead>
                         <tr>
                             <th>Время создания</th>
-                            <th>Клиент</th>
-                            <th>Курьер</th>
                             <th>Стоимость</th>
                             <th>Статус</th>
                         </tr>

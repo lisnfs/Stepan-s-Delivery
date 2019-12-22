@@ -50,6 +50,11 @@ class HomePageComponent extends React.Component<Props, State> {
                             </Link>
                         </Button>
                         <Button color="link">
+                            <Link to="/deliveryPoints">
+                                Пункты выдачи
+                            </Link>
+                        </Button>
+                        <Button color="link">
                             <Link to="/orders">
                                 Заказы
                             </Link>

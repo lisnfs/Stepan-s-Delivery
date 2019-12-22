@@ -11,7 +11,7 @@ interface Props {
     getDishes: any;
     dishes: any;
     isLoading: boolean;
-    deleteOrder: any
+    deleteDish: any
 }
 
 interface State {
@@ -44,7 +44,7 @@ class DishListComponent extends React.Component<Props, State> {
                                     </Button>
                                     <Button size="sm"
                                             color="danger"
-                                            onClick={() => this.props.deleteOrder(dish.id)}
+                                            onClick={() => this.props.deleteDish(dish.id)}
                                     >
                                         Удалить
                                     </Button>

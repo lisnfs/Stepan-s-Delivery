@@ -1,43 +1,57 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
+import {Button, Container, Form, FormGroup, Input, Label, Table, ButtonGroup} from 'reactstrap';
 import {AppNavBar} from '../common/AppNavBar';
 import {connect} from 'react-redux';
-import {DispatchThunk} from '@store';
-import {getChosenOrder, getOrders, isLoading, Thunks as orderssThunks} from '@store/orders';
+import {DispatchThunk, history} from '@store';
+import {getChosenOrder, getOrders, isLoading, Thunks as ordersThunks} from '@store/orders';
+import {getDeliveryPoints, Thunks as deliveryPointsThunks} from '@store/deliveryPoints';
+import {getDishes, Thunks as dishesThunks} from '@store/dishes';
+import {debuglog} from 'util';
+import {ACCESS_TOKEN, USER_ROLE} from '../../constants';
+import {Actions as alertActions} from '@store/alerts';
+import {Thunks} from '@store/authentication';
+import {DishInOrder} from '../../models/DishInOrder';
 
 interface Props {
     match: any;
-    orderss: any;
+    orders: any;
+    dishes: any;
     isLoading: boolean;
-    onGetOrders: any;
-    onEditOrders: any;
-    onCreateOrders: any;
-    chosenOrders: any;
+    onGetOrder: any;
+    onEditOrder: any;
+    onCreateOrder: any;
+    chosenOrder: any;
+    deliveryPoints: any;
+    getDeliveryPoints: any;
+    getDishes: any;
+    createDishInOrder: any;
+    deleteDishInOrders: any;
 }
 
 interface State {
-    orders: any;
+    order: any;
 }
 
 class OrderEditComponent extends React.Component<Props, State> {
 
-    orders;
+    order;
 
     state = {
-        orders: {
+        order: {
             id: 0,
-            fullName: undefined,
-            experience: undefined,
-            workingNumber: undefined,
-            cellPhone: undefined,
+            client_id: 1,
+            address_id: 1,
         },
+
     };
 
     componentDidMount() {
+            this.props.getDeliveryPoints();
+            this.props.getDishes();
         console.log('this props', this.props);
-        if (this.props.match.params.id !== 'new') {
-            this.props.onGetOrders(this.props.match.params.id);
+        if (this.props.match.params.id !== 'new ') {
+            this.props.onGetOrder(this.props.match.params.id);
             console.log('got orders', this.props);
         }
     }
@@ -46,28 +60,84 @@ class OrderEditComponent extends React.Component<Props, State> {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        let item = this.orders;
+        let item = this.order;
         item[name] = value;
-        this.setState({orders: item});
+        this.setState({order: item});
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        const item = this.state.orders;
+        const item = this.state.order;
         if (item.id && item.id !== 0) {
-            this.props.onEditOrders(item);
+            this.props.onEditOrder(item);
         } else {
-            this.props.onCreateOrders(item);
+            this.props.onCreateOrder(item);
         }
     }
 
+    createDishInOrder(id: number) {
+        const dishInOrder = {
+
+            count: 1,
+            dish_id: id,
+            order_id: this.props.chosenOrder.id,
+        };
+        this.props.createDishInOrder(dishInOrder);
+
+//         const promise = this.props.createDishInOrder();
+//         console.log(promise);
+//         debugger;
+//         promise
+//             .then((data: any) => {
+//                 // const element = `${data.data.tokenType} ${data.data.accessToken}`;
+//                 console.log(data);
+//
+//                 // localStorage.setItem(ACCESS_TOKEN, element);
+//                 // localStorage.setItem(USER_ROLE, data.data.list[0].authority);
+//                 // dispatch(alertActions.success('Login successfully'));
+//                 // history.push('/');
+//             }, error => {
+//                 // console.error('error', error);
+//                 // Thunks.logout();
+//                 // dispatch(alertActions.error('Login failed'));
+//             });
+
+    }
+
     render() {
-        if (this.props.orderss.isLoading) {
+        if (this.props.orders.isLoading) {
             return (<p>Loading</p>);
         }
-        this.orders = this.state.orders.id || this.props.chosenOrders ?
-            this.props.chosenOrders : this.state.orders;
-        const title = <h2>{this.orders.id ? 'Edit Orders' : 'Add Orders'}</h2>;
+
+
+        const dishList = this.props.dishes.map(dish => {
+            return (
+                <tr key={dish.id}>
+                    <td style={{whiteSpace: 'nowrap'}}>{dish.name}</td>
+                    <td style={{whiteSpace: 'nowrap'}}>{dish.cost}</td>
+                    <td>
+                        <ButtonGroup>
+                            <Button
+                                size="sm"
+                                color="primary"
+                                onClick={() =>this.createDishInOrder(dish.id)}
+                            >
+                                Добавить
+                            </Button>
+                        </ButtonGroup>
+                    </td>
+                </tr>
+            );
+        });
+
+        this.order = this.state.order.id || this.props.chosenOrder ?
+            this.props.chosenOrder : this.state.order;
+
+        const isCreated = this.order.id;
+
+        const title = <h2>{this.order.id ? 'Изменение заказа' : 'Добавление заказа'}</h2>;
+        // const addDish = isCreated ? <Button color="secondary" tag={Link} to="/orders">Добавить блюдо</Button> : '';
+
         return (
             <div>
                 <AppNavBar/>
@@ -75,67 +145,45 @@ class OrderEditComponent extends React.Component<Props, State> {
                     {title}
                     <Form onSubmit={(event) => this.handleSubmit(event)}>
                         <FormGroup>
-                            <Label for="fullName">Full Name</Label>
+                            <Label for="address_id">Выберите адресс выдачи:</Label>
                             <Input
-                                type="text"
-                                name="fullName"
-                                id="fullName"
-                                value={this.orders.fullName || ''}
+                                type="select"
+                                name="address_id"
+                                id="address_id"
+                                value={this.state.order.address_id || ''}
                                 onChange={
                                     (evt) => this.handleChange(evt)
+                                }>
+                                {
+                                    this.props.deliveryPoints
+                                        .map(deliveryPoint => <option
+                                            key={deliveryPoint.id}
+                                            value={deliveryPoint.id}>{deliveryPoint.address}</option>
+                                        )
                                 }
-                                autoComplete="name"
-                            />
-                            <Label for="career">Career</Label>
-                            <Input
-                                type="text"
-                                name="career"
-                                id="career"
-                                value={this.orders.career || ''}
-                                onChange={
-                                    (evt) => this.handleChange(evt)
-                                }
-                                autoComplete="career"
-                            />
-                            <Label for="workingNumber">Working number</Label>
-                            <Input
-                                type="text"
-                                name="workingNumber"
-                                id="workingNumber"
-                                value={this.orders.workingNumber || ''}
-                                onChange={
-                                    (evt) => this.handleChange(evt)
-                                }
-                                autoComplete="workingNumber"
-                            />
-                            <Label for="experience">Experience</Label>
-                            <Input
-                                type="number"
-                                name="experience"
-                                id="experience"
-                                value={this.orders.experience || ''}
-                                onChange={
-                                    (evt) => this.handleChange(evt)
-                                }
-                                autoComplete="experience"
-                            />
-                            <Label for="cellPhone">Cell Phone</Label>
-                            <Input
-                                type="number"
-                                name="cellPhone"
-                                id="cellPhone"
-                                value={this.orders.cellPhone || ''}
-                                onChange={
-                                    (evt) => this.handleChange(evt)
-                                }
-                                autoComplete="cellPhone"
-                            />
+                            </Input>
                         </FormGroup>
                         <FormGroup>
                             <Button color="primary" type="submit">Save</Button>{' '}
-                            <Button color="secondary" tag={Link} to="/orderss">Cancel</Button>
+                            <Button color="secondary" tag={Link} to="/orders">Cancel</Button>
                         </FormGroup>
                     </Form>
+                    {isCreated ?
+                        <React.Fragment>
+                            <h3>Блюда</h3>
+                            <Table className="mt-4">
+                                <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Цена</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {dishList}
+                                </tbody>
+                            </Table>
+                        </React.Fragment> : ''}
+
                 </Container>
             </div>
         );
@@ -146,19 +194,33 @@ const mapStateToProps = (state) => {
     return {
         isLoading: isLoading(state),
         orders: getOrders(state),
-        chosenOrders: getChosenOrder(state),
+        chosenOrder: getChosenOrder(state),
+        deliveryPoints: getDeliveryPoints(state),
+        dishes: getDishes(state),
     };
 };
 
 const mapDispatchToProps = (dispatch: DispatchThunk) => ({
-    onCreateOrders: (orders) => {
-        dispatch(orderssThunks.createOrder(orders));
+    onCreateOrder: (orders) => {
+        dispatch(ordersThunks.createOrder(orders));
     },
-    onEditOrders: (orders) => {
-        dispatch(orderssThunks.updateOrder(orders));
+    onEditOrder: (orders) => {
+        dispatch(ordersThunks.updateOrder(orders));
     },
-    onGetOrders: (id) => {
-        dispatch(orderssThunks.getOrder(id));
+    onGetOrder: (id) => {
+        dispatch(ordersThunks.getOrder(id));
+    },
+    getDeliveryPoints: () => {
+        dispatch(deliveryPointsThunks.getDeliveryPoints());
+    },
+    getDishes: () => {
+        dispatch(dishesThunks.getDishes());
+    },
+    createDishInOrder: (orders) => {
+        dispatch(ordersThunks.createDishInOrder(orders));
+    },
+    deleteDishInOrders: (orders) => {
+        dispatch(ordersThunks.deleteDishInOrders(orders));
     },
 });
 

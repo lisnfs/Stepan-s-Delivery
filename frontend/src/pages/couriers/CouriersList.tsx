@@ -19,17 +19,10 @@ interface State {
 
 class CourierListComponent extends React.Component<Props, State> {
     componentDidMount(): void {
-        debugger;
-
         this.props.getCouriers();
     }
 
     render() {
-        // console.log(this)
-        //
-        if (!this.props.couriers) {
-            return (<p>Loading</p>);
-        }
 
         const courierList = this.props.couriers.map(courier => {
             return (
@@ -92,7 +85,7 @@ class CourierListComponent extends React.Component<Props, State> {
 const mapStateToProps = (state: RootState) => {
     return {
         isLoading: isLoading(state),
-        Couriers: getCouriers(state),
+        couriers: getCouriers(state),
     };
 };
 const mapDispatchToProps = (dispatch: DispatchThunk) => ({

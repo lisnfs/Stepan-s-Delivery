@@ -7,6 +7,7 @@ import {RegistrationState} from '@store/registration';
 import {OrdersState} from '@store/orders';
 import {DishesState} from '@store/dishes';
 import {CouriersState} from '@store/couriers';
+import {DeliveryPointsState} from '@store/deliveryPoints';
 
 export interface RootState {
     alert: AlertState;
@@ -15,6 +16,7 @@ export interface RootState {
     orders: OrdersState;
     dishes: DishesState;
     couriers: CouriersState;
+    deliveryPoints: DeliveryPointsState;
 }
 
 export type DispatchThunk = ThunkDispatch<RootState, void, Action>;

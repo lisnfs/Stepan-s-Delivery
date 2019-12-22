@@ -7,5 +7,7 @@ export interface Order {
     address?: string;
     payment?: number;
     discount?: number;
+    address_id?: number;
+    user_id?: number;
     user?: User;
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,8 +26,8 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timeDelivery;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "status")
+    private int status;
 
     @Column(name = "payment")
     private double payment;
@@ -34,10 +35,29 @@ public class Order {
     @Column(name = "discount")
     private double discount;
 
+    @JoinColumn(name = "address_id")
+    private int address_id;
+
+
+    @OneToMany(fetch = FetchType.EAGER,
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<DishInOrder> dishInOrders = new HashSet<DishInOrder>();
+
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
+    private User client;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "courier_id")
+    private User courier;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.EAGER)
+    private DeliveryPoint deliveryPoint;
 
     public Integer getId() {
         return id;
