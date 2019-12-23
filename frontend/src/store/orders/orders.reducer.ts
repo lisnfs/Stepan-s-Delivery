@@ -5,6 +5,7 @@ export interface OrdersState {
     orders: Order[];
     newOrder: any;
     chosenOrder: any;
+    chosenDishInOrder: any;
     isLoading: boolean;
     canDelete: boolean;
 }
@@ -13,6 +14,7 @@ const initialState: OrdersState = {
     orders: [],
     newOrder: {},
     chosenOrder: {},
+    chosenDishInOrder: {},
     isLoading: false,
     canDelete: false,
 };
@@ -22,6 +24,8 @@ export const ordersReducer = (
     action: ordersActions.Actions
 ): OrdersState => {
     switch (action.type) {
+        case ordersActions.ORDER_CLEAN:
+            return {...state, chosenOrder: {}, chosenDishInOrder: {}};
         case ordersActions.START_FETCHING_ORDERS:
             return {...state, isLoading: true};
         case ordersActions.FINISH_FETCHING_ORDERS:
@@ -44,11 +48,14 @@ export const ordersReducer = (
                 isLoading: false,
             };
         case ordersActions.CREATE_ORDER:
-            return {...state};
+            const createdOrder = Object.assign({}, action.payload);
+            return {
+                ...state,
+                chosenOrder: createdOrder};
         case ordersActions.UPDATE_ORDER:
             return {
                 ...state,
-                chosenOrder: initialState.chosenOrder,
+                chosenOrder: action.payload,
                 orders: state.orders.map(
                     order =>
                         order.id === action.payload.id ?
@@ -62,6 +69,40 @@ export const ordersReducer = (
                     order =>
                         order.id !== action.payload
                 ),
+            };
+
+        case ordersActions.CREATE_DISH_IN_ORDER:
+            const or = Object.assign({}, state.chosenOrder);
+            or.dishInOrders.push(action.payload);
+            return {...state, chosenOrder: or};
+
+        case ordersActions.START_FETCHING_DISH_IN_ORDER:
+            return {
+                ...state,
+                isLoading: true,
+            };
+        case ordersActions.FINISH_FETCHING_DISH_IN_ORDER:
+            const dishInOrder = action.payload;
+            console.log('dishInOrder', dishInOrder);
+            return {
+                ...state,
+                chosenDishInOrder: dishInOrder,
+                isLoading: false,
+            };
+        case ordersActions.UPDATE_DISH_IN_ORDER:
+            const chosenDishInOrder = action.payload;
+            return {
+                ...state,
+                chosenDishInOrder: chosenDishInOrder
+            };
+        case ordersActions.DELETE_DISH_IN_ORDER:
+            const dishInOrders = state.chosenOrder.dishInOrders
+                .filter(dishInOrder => dishInOrder.id !== action.payload);
+            const chosenOrder = Object.assign({}, state.chosenOrder);
+            chosenOrder.dishInOrders = dishInOrders;
+            return {
+                ...state,
+                chosenOrder: chosenOrder
             };
         default:
             return state;

@@ -48,7 +48,7 @@ export const couriersReducer = (
         case couriersActions.UPDATE_COURIER:
             return {
                 ...state,
-                chosenCourier: initialState.chosenCourier,
+                chosenCourier: action.payload,
                 couriers: state.couriers.map(
                     courier =>
                         courier.id === action.payload.id ?

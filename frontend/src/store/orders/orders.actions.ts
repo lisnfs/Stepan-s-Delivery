@@ -4,6 +4,7 @@ import axios from 'axios';
 import {ACCESS_TOKEN, API_BASE_URL} from '../../constants';
 import {Order} from '../../models/Order';
 import {DishInOrder} from '../../models/DishInOrder';
+export const ORDER_CLEAN = '[ORDERS] ORDER_CLEAN';
 
 export const START_FETCHING_ORDERS = '[ORDERS] START_FETCHING_ORDERS';
 export const FINISH_FETCHING_ORDERS = '[ORDERS] FINISH_FETCHING_ORDERS';
@@ -17,6 +18,10 @@ export const CREATE_ORDER = '[ORDERS] CREATE_ORDER';
 
 export const UPDATE_ORDER = '[ORDERS] UPDATE_ORDER';
 export const DELETE_ORDER = '[ORDERS] DELETE_ORDER';
+
+export const START_FETCHING_DISH_IN_ORDER = '[DISH_IN_ORDERS] START_FETCHING_DISH_IN_ORDER';
+export const FINISH_FETCHING_DISH_IN_ORDER = '[DISH_IN_ORDERS] FINISH_FETCHING_DISH_IN_ORDER';
+export const FAULT_FETCHING_DISH_IN_ORDER = '[DISH_IN_ORDERS] FAULT_FETCHING_DISH_IN_ORDER';
 
 export const CREATE_DISH_IN_ORDER = '[DISH_IN_ORDER] CREATE_DISH_IN_ORDER';
 
@@ -35,6 +40,7 @@ const getConfig = () => {
 };
 
 export const Actions = {
+    clean: () => createAction(ORDER_CLEAN),
     startFetchingOrders: () => createAction(START_FETCHING_ORDERS),
     startFetchingOrder: () => createAction(START_FETCHING_ORDER),
     createOrder: (order: Order) => createAction(CREATE_ORDER, order),
@@ -43,12 +49,21 @@ export const Actions = {
     updateOrder: (order: Order) => createAction(UPDATE_ORDER, order),
     deleteOrder: (id: number) => createAction(DELETE_ORDER, id),
 
+
+    startFetchingDishInOrder: () => createAction(START_FETCHING_DISH_IN_ORDER),
+    finishFetchingDishInOrder: (payload: any) => createAction(FINISH_FETCHING_DISH_IN_ORDER, payload),
+
     createDishInOrder: (dishInOrder: DishInOrder) => createAction(CREATE_DISH_IN_ORDER, dishInOrder),
-    updateDishInOrders: (dishInOrder: DishInOrder) => createAction(UPDATE_DISH_IN_ORDER, dishInOrder),
-    deleteDishInOrders: (id: number) => createAction(DELETE_DISH_IN_ORDER, id),
+    updateDishInOrder: (dishInOrder: DishInOrder) => createAction(UPDATE_DISH_IN_ORDER, dishInOrder),
+    deleteDishInOrder: (id: number) => createAction(DELETE_DISH_IN_ORDER, id),
 };
 
 export const Thunks = {
+    clearOrder: () => {
+        return (dispatch: Dispatch) => {
+            dispatch(Actions.clean());
+        };
+    },
     getOrders: () => {
         return (dispatch: Dispatch) => {
             dispatch(Actions.startFetchingOrders());
@@ -73,8 +88,11 @@ export const Thunks = {
     },
     createOrder: (order: Order) => {
         return (dipatch: Dispatch) => {
-            dipatch(Actions.createOrder(order));
-            axios.post(`${API_BASE_URL}/orders/`, order, getConfig());
+            axios.post(`${API_BASE_URL}/orders/`, order, getConfig())
+                .then(order => {
+                    debugger;
+                    dipatch(Actions.createOrder(order.data as Order));
+                });
         };
     },
     updateOrder: (order: Order) => {
@@ -89,21 +107,35 @@ export const Thunks = {
             axios.delete(`${API_BASE_URL}/orders/${id}`, getConfig());
         };
     },
-    createDishInOrder: (dishInOrder: DishInOrder) => {
-        return (dipatch: Dispatch) => {
-            dipatch(Actions.createDishInOrder(dishInOrder));
-            axios.post(`${API_BASE_URL}/dishInOrders/${dishInOrder.order_id}`, dishInOrder, getConfig());
+
+    getDishInOrder: (id: number) => {
+        return (dispatch: Dispatch) => {
+            dispatch(Actions.startFetchingDishInOrder());
+            const promise = axios.get(`${API_BASE_URL}/dishInOrders/${id}`, getConfig());
+            promise.then(response => {
+                    console.log('response dishInOrders', response);
+                    dispatch(Actions.finishFetchingDishInOrder(response.data));
+                }
+            );
         };
     },
-    updateDishInOrders: (dishInOrder: DishInOrder) => {
+    createDishInOrder: (dishInOrder: DishInOrder) => {
         return (dipatch: Dispatch) => {
-            dipatch(Actions.updateDishInOrders(dishInOrder));
+            axios.post(`${API_BASE_URL}/dishInOrders`, dishInOrder, getConfig())
+                .then(dishInOrder => {
+                    dipatch(Actions.createDishInOrder(dishInOrder.data as DishInOrder));
+                });
+        };
+    },
+    updateDishInOrder: (dishInOrder: DishInOrder) => {
+        return (dipatch: Dispatch) => {
+            dipatch(Actions.updateDishInOrder(dishInOrder));
             axios.post(`${API_BASE_URL}/dishInOrders/update`, dishInOrder, getConfig());
         };
     },
     deleteDishInOrders: (id: number) => {
         return (dipatch: Dispatch) => {
-            dipatch(Actions.deleteDishInOrders(id));
+            dipatch(Actions.deleteDishInOrder(id));
             axios.delete(`${API_BASE_URL}/dishInOrders/${id}`, getConfig());
         };
     }

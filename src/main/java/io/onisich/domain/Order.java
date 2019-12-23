@@ -39,11 +39,11 @@ public class Order {
     private int address_id;
 
 
-    @OneToMany(fetch = FetchType.EAGER,
-            mappedBy = "order",
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "order_id",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private Set<DishInOrder> dishInOrders = new HashSet<DishInOrder>();
+    private Set<DishInOrder> dishInOrders;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)

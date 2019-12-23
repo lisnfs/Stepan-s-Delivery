@@ -64,4 +64,22 @@ public class UsersController {
     }
 
 
+    @PostMapping("/update")
+    public ResponseEntity updateOrder(@RequestBody User user) {
+        Optional<User> optional = userRepository.findById(user.getId());
+        if (optional.isPresent()) {
+            userRepository.save(user);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteOrder(@PathVariable(name = "id") Integer id) {
+        this.userRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

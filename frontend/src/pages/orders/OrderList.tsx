@@ -10,7 +10,8 @@ interface Props {
     getOrders: any;
     orders: any;
     isLoading: boolean;
-    deleteOrder: any
+    deleteOrder: any;
+    clearOrder: any;
 }
 
 interface State {
@@ -20,6 +21,7 @@ interface State {
 class OrderListComponent extends React.Component<Props, State> {
     componentDidMount(): void {
         this.props.getOrders();
+        this.props.clearOrder();
     }
 
     render() {
@@ -44,12 +46,12 @@ class OrderListComponent extends React.Component<Props, State> {
                             >
                                 Изменить
                             </Button>
-                            {/*<Button size="sm"*/}
-                            {/*        color="danger"*/}
-                            {/*        onClick={() => this.props.deleteOrder(order.id)}*/}
-                            {/*>*/}
-                            {/*    Delete*/}
-                            {/*</Button>*/}
+                            <Button size="sm"
+                                    color="danger"
+                                    onClick={() => this.props.deleteOrder(order.id)}
+                            >
+                                Delete
+                            </Button>
                         </ButtonGroup>
                     </td>
                 </tr>
@@ -98,6 +100,10 @@ const mapDispatchToProps = (dispatch: DispatchThunk) => ({
     getOrders: () => {
         dispatch(ordersThunks.getOrders());
     },
+    clearOrder: () => {
+        dispatch(ordersThunks.clearOrder());
+    },
+
     deleteOrder: (id: number) => {
         dispatch(ordersThunks.deleteOrder(id))
     }

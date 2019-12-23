@@ -18,3 +18,8 @@ export const getChosenOrder = createSelector(
     getOrdersState,
     state => state.chosenOrder,
 );
+
+export const getChosenDishInOrder = createSelector(
+    getOrdersState,
+    state => state.chosenDishInOrder,
+);

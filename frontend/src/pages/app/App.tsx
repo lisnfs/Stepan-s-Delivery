@@ -16,6 +16,8 @@ import {OrderEdit} from '../orders/OrderEdit';
 import {CouriersList} from '../couriers/CouriersList';
 import {DeliveryPointsList} from '../deliveryPoints/DeliveryPointList';
 import {DeliveryPointEdit} from '../deliveryPoints/DeliveryPointEdit';
+import {DishInOrderEdit} from '../orders/DishInOrderEdit';
+import {CourierEdit} from '../couriers/CourierEdit';
 
 interface Props {
     alert?: AlertItem
@@ -51,15 +53,17 @@ class AppComponent extends Component<Props, State> {
                             <Switch>
                                 <PrivateRoute exact path="/" component={HomePage}/>
                                 <PrivateRoute exact path="/orders" component={OrdersList}/>
-                                <PrivateRoute exact path="/orders/:id" component={OrderEdit}/>
+                                <PrivateRoute exact path="/orders/:id/" component={OrderEdit}/>
+                                <PrivateRoute exact path="/orders/:order_id/:id" component={DishInOrderEdit}/>
                                 <PrivateRoute exact path="/dishes" component={DishesList}/>
                                 <PrivateRoute exact path="/deliveryPoints/:id" component={DeliveryPointEdit}/>
                                 <PrivateRoute exact path="/deliveryPoints" component={DeliveryPointsList}/>
                                 <PrivateRoute exact path="/dishes/:id" component={DishEdit}/>
                                 <PrivateRoute exact path="/couriers" component={CouriersList}/>
+                                <PrivateRoute exact path="/couriers/:id" component={CourierEdit}/>
                                 <Route path="/login" component={LoginPage}/>
                                 <Route path="/register" component={RegisterPage}/>
-                                <Redirect from="*" to="/"/>
+                                <Redirect from="*" to="/login"/>
                             </Switch>
                         </Router>
                     </div>

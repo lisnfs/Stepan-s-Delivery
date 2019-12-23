@@ -48,7 +48,7 @@ export const dishesReducer = (
         case dishesActions.UPDATE_DISH:
             return {
                 ...state,
-                chosenDish: initialState.chosenDish,
+                chosenDish: action.payload,
                 dishes: state.dishes.map(
                     doctor =>
                         doctor.id === action.payload.id ?

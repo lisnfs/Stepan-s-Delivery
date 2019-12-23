@@ -37,11 +37,15 @@ public class OrdersController {
     }
 
     @PostMapping
-    public ResponseEntity addOrder(@RequestBody Order order) {
+    public ResponseEntity<Order> addOrder(@RequestBody Order order) {
 
         order.setTimeOrder(new Date());
         Order save = orderRepository.save(order);
-        return save == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok().build();
+        Optional<Order> optional = orderRepository.findById(save.getId());
+        if (optional.isPresent()) {
+            return ResponseEntity.ok(optional.get());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/update")
@@ -55,9 +59,9 @@ public class OrdersController {
         }
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity deleteOrder(@PathVariable(name = "id") Integer id) {
-//        this.orderRepository.deleteById(id);
-//        return ResponseEntity.ok().build();
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteOrder(@PathVariable(name = "id") Integer id) {
+        this.orderRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -12,6 +12,7 @@ import {ACCESS_TOKEN, USER_ROLE} from '../../constants';
 import {Actions as alertActions} from '@store/alerts';
 import {Thunks} from '@store/authentication';
 import {DishInOrder} from '../../models/DishInOrder';
+import {Order} from '../../models/Order';
 
 interface Props {
     match: any;
@@ -30,25 +31,26 @@ interface Props {
 }
 
 interface State {
-    order: any;
+    chosenOrder: any;
 }
 
 class OrderEditComponent extends React.Component<Props, State> {
 
-    order;
+    chosenOrder;
 
     state = {
-        order: {
+        chosenOrder: {
             id: 0,
             client_id: 1,
             address_id: 1,
+            dishInOrders: []
         },
 
     };
 
     componentDidMount() {
-            this.props.getDeliveryPoints();
-            this.props.getDishes();
+        this.props.getDeliveryPoints();
+        this.props.getDishes();
         console.log('this props', this.props);
         if (this.props.match.params.id !== 'new ') {
             this.props.onGetOrder(this.props.match.params.id);
@@ -60,14 +62,14 @@ class OrderEditComponent extends React.Component<Props, State> {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        let item = this.order;
+        let item = this.chosenOrder;
         item[name] = value;
-        this.setState({order: item});
+        this.setState({chosenOrder: item});
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        const item = this.state.order;
+        const item = this.state.chosenOrder;
         if (item.id && item.id !== 0) {
             this.props.onEditOrder(item);
         } else {
@@ -83,25 +85,6 @@ class OrderEditComponent extends React.Component<Props, State> {
             order_id: this.props.chosenOrder.id,
         };
         this.props.createDishInOrder(dishInOrder);
-
-//         const promise = this.props.createDishInOrder();
-//         console.log(promise);
-//         debugger;
-//         promise
-//             .then((data: any) => {
-//                 // const element = `${data.data.tokenType} ${data.data.accessToken}`;
-//                 console.log(data);
-//
-//                 // localStorage.setItem(ACCESS_TOKEN, element);
-//                 // localStorage.setItem(USER_ROLE, data.data.list[0].authority);
-//                 // dispatch(alertActions.success('Login successfully'));
-//                 // history.push('/');
-//             }, error => {
-//                 // console.error('error', error);
-//                 // Thunks.logout();
-//                 // dispatch(alertActions.error('Login failed'));
-//             });
-
     }
 
     render() {
@@ -110,34 +93,88 @@ class OrderEditComponent extends React.Component<Props, State> {
         }
 
 
-        const dishList = this.props.dishes.map(dish => {
-            return (
-                <tr key={dish.id}>
-                    <td style={{whiteSpace: 'nowrap'}}>{dish.name}</td>
-                    <td style={{whiteSpace: 'nowrap'}}>{dish.cost}</td>
-                    <td>
-                        <ButtonGroup>
-                            <Button
-                                size="sm"
-                                color="primary"
-                                onClick={() =>this.createDishInOrder(dish.id)}
-                            >
-                                Добавить
-                            </Button>
-                        </ButtonGroup>
-                    </td>
-                </tr>
-            );
-        });
+        this.chosenOrder = this.props.chosenOrder ?
+            this.props.chosenOrder : this.state.chosenOrder;
+        debugger;
 
-        this.order = this.state.order.id || this.props.chosenOrder ?
-            this.props.chosenOrder : this.state.order;
+        const isCreated = this.chosenOrder.id;
 
-        const isCreated = this.order.id;
+        console.log(this.chosenOrder);
 
-        const title = <h2>{this.order.id ? 'Изменение заказа' : 'Добавление заказа'}</h2>;
-        // const addDish = isCreated ? <Button color="secondary" tag={Link} to="/orders">Добавить блюдо</Button> : '';
 
+        let dishInOrderList = [<tr>
+            <td style={{whiteSpace: 'nowrap'}}>
+                Добавьте пункт заказа
+            </td>
+            <td style={{whiteSpace: 'nowrap'}}>
+            </td>
+            <td>
+            </td>
+        </tr>];
+        if (this.chosenOrder.dishInOrders) {
+
+            dishInOrderList = (this.chosenOrder.dishInOrders as DishInOrder[]).map(dishInOrder => {
+
+                const dish = this.props.dishes.find(dish => dish.id === dishInOrder.dish_id);
+                // console.log(dish);
+                // debugger;
+                return (
+                    <tr key={dishInOrder.id}>
+                        <td style={{whiteSpace: 'nowrap'}}>
+                            {dish ? dish.name : null}
+                        </td>
+                        <td style={{whiteSpace: 'nowrap'}}>
+                            {dishInOrder.count || 0}
+                        </td>
+                        <td>
+                            <ButtonGroup>
+                                <Button
+                                    size="sm"
+                                    color="primary"
+                                    tag={Link}
+                                    to={'/orders/' + dishInOrder.order_id + '/' + dishInOrder.id}
+                                >
+                                    Изменить
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    color="danger"
+                                    onClick={() => this.props.deleteDishInOrders(dishInOrder.id)}
+                                >
+                                    Удалить
+                                </Button>
+                            </ButtonGroup>
+                        </td>
+                    </tr>
+                );
+            });
+
+        }
+
+        const dishList = this.props.dishes
+            .filter(dish => !((this.chosenOrder.dishInOrders as DishInOrder[]) || [])
+                .find(dishInOrder => dishInOrder.dish_id === dish.id))
+            .map(dish => {
+                return (
+                    <tr key={dish.id}>
+                        <td style={{whiteSpace: 'nowrap'}}>{dish.name}</td>
+                        <td style={{whiteSpace: 'nowrap'}}>{dish.cost}</td>
+                        <td>
+                            <ButtonGroup>
+                                <Button
+                                    size="sm"
+                                    color="primary"
+                                    onClick={() => this.createDishInOrder(dish.id)}
+                                >
+                                    Добавить
+                                </Button>
+                            </ButtonGroup>
+                        </td>
+                    </tr>
+                );
+            });
+
+        const title = <h2>{this.chosenOrder.id ? 'Изменение заказа' : 'Добавление заказа'}</h2>;
         return (
             <div>
                 <AppNavBar/>
@@ -150,7 +187,7 @@ class OrderEditComponent extends React.Component<Props, State> {
                                 type="select"
                                 name="address_id"
                                 id="address_id"
-                                value={this.state.order.address_id || ''}
+                                value={this.chosenOrder.address_id || ''}
                                 onChange={
                                     (evt) => this.handleChange(evt)
                                 }>
@@ -164,10 +201,25 @@ class OrderEditComponent extends React.Component<Props, State> {
                             </Input>
                         </FormGroup>
                         <FormGroup>
-                            <Button color="primary" type="submit">Save</Button>{' '}
-                            <Button color="secondary" tag={Link} to="/orders">Cancel</Button>
+                            <Button color="primary" type="submit">Сохранить</Button>{' '}
+                            <Button color="secondary" tag={Link} to="/orders">Назад</Button>
                         </FormGroup>
                     </Form>
+                    {isCreated ?
+                        <React.Fragment>
+                            <h3>Выбранные блюда</h3>
+                            <Table className="mt-4">
+                                <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Количество</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {dishInOrderList}
+                                </tbody>
+                            </Table>
+                        </React.Fragment> : ''}
                     {isCreated ?
                         <React.Fragment>
                             <h3>Блюда</h3>

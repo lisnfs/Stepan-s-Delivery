@@ -10,7 +10,7 @@ interface Props {
     getCouriers: any;
     couriers: any;
     isLoading: boolean;
-    deleteOrder: any
+    deleteCourier: any
 }
 
 interface State {
@@ -31,17 +31,17 @@ class CourierListComponent extends React.Component<Props, State> {
                     <td style={{whiteSpace: 'nowrap'}}>{courier.cost}</td>
                     <td>
                         <ButtonGroup>
-                            {/*<Button*/}
-                            {/*    size="sm"*/}
-                            {/*    color="primary"*/}
-                            {/*    tag={Link}*/}
-                            {/*    to={'/Courierses/' + Couriers.id}*/}
-                            {/*>*/}
-                            {/*    Изменить*/}
-                            {/*</Button>*/}
+                            <Button
+                                size="sm"
+                                color="primary"
+                                tag={Link}
+                                to={'/couriers/' + courier.id}
+                            >
+                                Изменить
+                            </Button>
                             <Button size="sm"
                                     color="danger"
-                                    onClick={() => this.props.deleteOrder(courier.id)}
+                                    onClick={() => this.props.deleteCourier(courier.id)}
                             >
                                 Удалить
                             </Button>
@@ -56,13 +56,6 @@ class CourierListComponent extends React.Component<Props, State> {
                 <AppNavBar/>
                 <Container fluid>
                     <div className="float-right">
-                        {/*<Button*/}
-                        {/*    color="success"*/}
-                        {/*    tag={Link}*/}
-                        {/*    to="/Courierses/new "*/}
-                        {/*>*/}
-                        {/*    Добавить блюдо*/}
-                        {/*</Button>*/}
                     </div>
                     <h3>Курьеры</h3>
                     <Table className="mt-4">

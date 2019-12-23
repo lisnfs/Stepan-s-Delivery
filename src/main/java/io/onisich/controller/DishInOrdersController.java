@@ -40,15 +40,9 @@ public class DishInOrdersController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity addDishInOrder(@PathVariable (value = "id") Integer order_id,
-                                         @RequestBody DishInOrder dishInOrder) {
-        DishInOrder save = orderRepository.findById(order_id).map(order -> {
-                    dishInOrder.setOrder(order);
-                    return dishInOrderRepository.save(dishInOrder);
-                }).orElseThrow(() -> new AppException("User Role not set."));;
-
-//         = dishInOrderRepository.save(dishInOrder);
+    @PostMapping
+    public ResponseEntity addDishInOrder(@RequestBody DishInOrder dishInOrder) {
+        DishInOrder save = dishInOrderRepository.save(dishInOrder);
         return save == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok().build();
     }
 

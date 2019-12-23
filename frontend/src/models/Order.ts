@@ -1,4 +1,5 @@
 import {User} from './User';
+import {DishInOrder} from './DishInOrder';
 
 export interface Order {
     id?: number;
@@ -10,4 +11,5 @@ export interface Order {
     address_id?: number;
     user_id?: number;
     user?: User;
+    dishInOrders?: DishInOrder[];
 }
