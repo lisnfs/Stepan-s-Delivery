@@ -41,9 +41,13 @@ public class DishInOrdersController {
     }
 
     @PostMapping
-    public ResponseEntity addDishInOrder(@RequestBody DishInOrder dishInOrder) {
+    public ResponseEntity<DishInOrder> addDishInOrder(@RequestBody DishInOrder dishInOrder) {
         DishInOrder save = dishInOrderRepository.save(dishInOrder);
-        return save == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok().build();
+        Optional<DishInOrder> optional = dishInOrderRepository.findById(save.getId());
+        if (optional.isPresent()) {
+            return ResponseEntity.ok(optional.get());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/update")

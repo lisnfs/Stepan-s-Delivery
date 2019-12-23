@@ -111,11 +111,14 @@ class OrderEditComponent extends React.Component<Props, State> {
             <td>
             </td>
         </tr>];
+        let sum = 0;
         if (this.chosenOrder.dishInOrders) {
 
-            dishInOrderList = (this.chosenOrder.dishInOrders as DishInOrder[]).map(dishInOrder => {
+            dishInOrderList = (this.chosenOrder.dishInOrders as DishInOrder[]).map((dishInOrder: DishInOrder) => {
 
                 const dish = this.props.dishes.find(dish => dish.id === dishInOrder.dish_id);
+                // @ts-ignore
+                sum += dish.cost * dishInOrder.count;
                 // console.log(dish);
                 // debugger;
                 return (
@@ -148,7 +151,11 @@ class OrderEditComponent extends React.Component<Props, State> {
                     </tr>
                 );
             });
+        }
 
+        if (sum > 0 && this.chosenOrder.payment !== sum) {
+            this.chosenOrder.payment = sum;
+            this.props.onEditOrder(this.chosenOrder);
         }
 
         const dishList = this.props.dishes
@@ -217,6 +224,10 @@ class OrderEditComponent extends React.Component<Props, State> {
                                 </thead>
                                 <tbody>
                                 {dishInOrderList}
+                                <tr>
+                                    <th>Стоимость:</th>
+                                    <th>{sum}</th>
+                                </tr>
                                 </tbody>
                             </Table>
                         </React.Fragment> : ''}

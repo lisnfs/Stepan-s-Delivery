@@ -123,6 +123,7 @@ export const Thunks = {
         return (dipatch: Dispatch) => {
             axios.post(`${API_BASE_URL}/dishInOrders`, dishInOrder, getConfig())
                 .then(dishInOrder => {
+                    debugger;
                     dipatch(Actions.createDishInOrder(dishInOrder.data as DishInOrder));
                 });
         };
