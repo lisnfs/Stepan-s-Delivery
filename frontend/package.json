@@ -51,7 +51,7 @@
     "es6-promise": "^4.2.8",
     "html-webpack-plugin": "latest",
     "mini-css-extract-plugin": "latest",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "redbox-react": "^1.6.0",
     "ts-loader": "^6.1.0",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
